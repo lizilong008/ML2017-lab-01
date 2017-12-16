@@ -109,38 +109,19 @@ class Lmodel:
     pass
 
 #read origin data
-x,y=ds.load_svmlight_file("./australian.txt")
-min_max_scaler = prep.MinMaxScaler() 
-
-#warning:Cause th scaled data lost some value,so I used the origin data and normalizaed it by myself
-x_scale_cols=[]
-cols_num=len(x[0].data)
-rows_num=x.shape[0]
-for i in range(cols_num):
-    col=[]
-    for j in range(rows_num):
-        col.append(x[j].data[i])
-    col=np.array(col).reshape(-1,1)
-    col= min_max_scaler.fit_transform(col)
-    col=col.tolist()  
-    x_scale_cols.append(col)
-x_scale_cols=np.array(x_scale_cols)
-
-
-x_scale=[]
-for i in range(rows_num):
-    row=[]
-    for j in range(cols_num):
-        row.append(x_scale_cols[j][i][0])
-    x_scale.append(row)
-
+x,y=ds.load_svmlight_file("./australian_scale.txt")
+x=x.toarray('c')
 #serprate the data
-x_train,x_test,y_train,y_test=ms.train_test_split(x_scale,y,test_size=0.33)
+x_train,x_test,y_train,y_test=ms.train_test_split(x,y,test_size=0.33)
+
 
 model_params=[0.0]*(len(y_test)+1)
-model_params=[0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.10,0.11,0.12,0.13]
+#model_params=[0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.10,0.11,0.12,0.13]
 #train
-Lmodel.train(80,x_train,y_train,x_test,y_test,0.001,100)
+iter_num=80
+learning_rate=0.001
+C=100
+Lmodel.train(iter_num,x_train,y_train,x_test,y_test,learning_rate,C)
 
 
 
